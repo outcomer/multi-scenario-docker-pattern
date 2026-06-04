@@ -1,4 +1,4 @@
-# multi-scenario-docker-pattern
+# Multi-Scenario Docker Pattern
 
 This repository is a working reference implementation of the Multi-Scenario Docker Pattern described below.
 

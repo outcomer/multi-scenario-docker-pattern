@@ -1,0 +1,47 @@
+{
+	"name": "my-app — scenario-embeded",
+	"dockerComposeFile": "./docker-compose.yml",
+	"service": "app",
+	"runServices": [],
+	"workspaceFolder": "/app",
+	"shutdownAction": "none",
+	"remoteUser": "root",
+	"forwardPorts": [
+		8080,
+		5432
+	],
+	"features": {},
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,readonly,type=bind"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"bmewburn.vscode-intelephense-client",
+				"xdebug.php-debug",
+				"cweijan.vscode-postgresql-client2",
+				"junstyle.php-cs-fixer"
+			],
+			"settings": {
+				"editor.formatOnSave": true,
+				"editor.formatOnSaveMode": "file",
+				"[php]": {
+					"editor.defaultFormatter": "junstyle.php-cs-fixer"
+				},
+				"php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+				"php-cs-fixer.onsave": true,
+				"php-cs-fixer.autoFixByBracket": true,
+				"php-cs-fixer.autoFixBySemicolon": false,
+				"php-cs-fixer.documentFormattingProvider": true,
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"php.validate.enable": true,
+				"php.suggest.basic": false,
+				"files.exclude": {
+					"**/.php-cs-fixer.cache": true
+				}
+			}
+		}
+	},
+	"postCreateCommand": "git config --global --add safe.directory /app"
+}

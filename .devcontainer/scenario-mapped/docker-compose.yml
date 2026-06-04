@@ -1,0 +1,87 @@
+name: ${COMPOSE_PROJECT_NAME}
+
+services:
+  app:
+    image: ${COMPOSE_PROJECT_NAME}-app
+    hostname: app
+    container_name: ${COMPOSE_PROJECT_NAME}-App
+    build:
+      context: ../..
+      dockerfile: .devcontainer/Dockerfile.app
+      target: mapped
+      args:
+        - DOCKER_HUB_DOMAIN=${DOCKER_HUB_DOMAIN}
+    working_dir: /app
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+        compress: "true"
+    env_file:
+      - .env
+      - ../../.env
+    volumes:
+      - ../../:/app
+      - ../_configs/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
+      - ${DOCKER_SOCK}:/var/run/docker.sock
+      - vendor_data:/app/vendor
+    ports:
+      - ${APP_PORT}:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      app-network:
+
+  postgres:
+    image: ${COMPOSE_PROJECT_NAME}-postgres
+    hostname: postgres
+    container_name: ${COMPOSE_PROJECT_NAME}-PostgreSQL
+    build:
+      context: ../..
+      dockerfile: .devcontainer/Dockerfile.database
+      args:
+        - DOCKER_HUB_DOMAIN=${DOCKER_HUB_DOMAIN}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+        compress: "true"
+    env_file:
+      - .env
+      - ../../.env
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ../../.env:/app/.env:ro
+      - ../_scripts/cmd-postgres.sh:/app/.devcontainer/_scripts/cmd-postgres.sh
+      - ../_configs/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ../_configs/init-database.sql:/docker-entrypoint-initdb.d/init-database.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      app-network:
+
+volumes:
+  postgres_data:
+  vendor_data:
+
+networks:
+  app-network:
+    driver: bridge
+    name: ${COMPOSE_PROJECT_NAME}-network

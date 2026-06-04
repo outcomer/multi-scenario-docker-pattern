@@ -1,0 +1,12 @@
+ARG DOCKER_HUB_DOMAIN=docker.io/library
+FROM ${DOCKER_HUB_DOMAIN}/postgres:17
+
+# Install gettext for envsubst command
+RUN apt-get update && \
+    apt-get install -y gettext-base && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set default encoding
+ENV POSTGRES_INITDB_ARGS="--encoding=UTF8 --locale=en_US.UTF-8"
+
+CMD ["bash", "/app/.devcontainer/_scripts/cmd-postgres.sh"]

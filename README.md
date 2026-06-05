@@ -1,8 +1,6 @@
 # Multi-Scenario Docker Pattern
 
-This repository is a working reference implementation of the Multi-Scenario Docker Pattern described below.
-
-It contains a minimal Symfony application with two ready-to-use deployment scenarios — `scenario-mapped` for local development and `scenario-embeded` for server deployment — built on a single shared Docker runtime.
+This pattern was created to solve environment drift between development, CI, and production in a real-world deployment setup where runtime consistency was critical. The repository is a working reference implementation of the Multi-Scenario Docker Pattern described below. It contains a minimal Symfony application with two ready-to-use deployment scenarios — `scenario-mapped` for local development and `scenario-embeded` for server deployment — built on a single shared Docker runtime.
 
 ## Quick start
 
